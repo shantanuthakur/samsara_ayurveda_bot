@@ -4,11 +4,10 @@ import time
 from dotenv import load_dotenv
 from openai import OpenAI
 
-# 1. Initialize
+
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# Themes for better clinical diversity
 THEMES = [
     "PCOS & Hormonal Imbalance", "Thyroid (Hypo/Hyper)", "Weight Loss (Kapha reduction)",
     "Weight Gain (Vata nourishing)", "Digestive Health (Acidity/IBS)", 
@@ -16,7 +15,7 @@ THEMES = [
     "Postpartum & Women's Strength", "Sedentary Professional (Cervical/Stress)"
 ]
 
-def generate_sft_batch(batch_size=10, theme="General Health"):
+def generate_sft_batch(batch_size=20, theme="General Health"):
     """
     Generates clinical training cases in JSON format.
     Includes all 13 required parameters for accurate diet generation.
@@ -54,7 +53,7 @@ def generate_sft_batch(batch_size=10, theme="General Health"):
         print(f"Error in {theme} batch: {e}")
         return []
 
-# 2. Main Execution
+#  Main Execution
 output_file = "Samsara_1000_Cases_Diet.jsonl"
 total_goal = 1000
 current_count = 0
@@ -66,7 +65,7 @@ with open(output_file, 'w', encoding='utf-8') as f:
         for theme in THEMES:
             if current_count >= total_goal: break
             
-            # Generate in batches of 10 to keep AI accuracy high
+           
             batch = generate_sft_batch(10, theme)
             for case in batch:
                 training_row = {
@@ -77,7 +76,7 @@ with open(output_file, 'w', encoding='utf-8') as f:
                 f.write(json.dumps(training_row) + "\n")
                 current_count += 1
             
-            print(f"✅ Progress: {current_count}/{total_goal} | Theme: {theme}")
+            print(f"Progress: {current_count}/{total_goal} | Theme: {theme}")
             time.sleep(1) # Prevent rate limits
 
 print(f"🏁 SUCCESS: 1000 cases saved in {output_file}")

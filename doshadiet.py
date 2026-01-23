@@ -5,11 +5,11 @@ import time
 from dotenv import load_dotenv
 from openai import OpenAI
 
-# 1. Initialize
+
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# Add your states here. The script will process them 1 by 1.
+
 STATES_LIST = ["Assam", "Uttarakhand"] 
 
 def generate_state_data(state, count=25):
@@ -39,7 +39,7 @@ def main():
     csv_file = "Master_Ayurveda_Food_Matrix.csv"
     headers = ["state", "item_name", "rasa", "virya", "vipaka", "dosha_impact", "effect_on_agni", "best_use_case"]
     
-    # Create the file and write headers ONLY IF it doesn't exist
+
     if not os.path.exists(csv_file):
         with open(csv_file, 'w', newline='', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=headers)
@@ -49,22 +49,22 @@ def main():
     for state in STATES_LIST:
         print(f"Starting generation for: {state}...")
         
-        # Generate 100 items per state in 4 batches of 25
+       
         for batch in range(1, 5):
             items = generate_state_data(state, 25)
             
             if items:
-                # 'a' mode appends to the existing file instead of creating a new one
+                
                 with open(csv_file, 'a', newline='', encoding='utf-8') as f:
                     writer = csv.DictWriter(f, fieldnames=headers)
                     for item in items:
-                        # Ensure every row has the correct state name
+                        
                         item['state'] = state
                         row = {h: item.get(h, "N/A") for h in headers}
                         writer.writerow(row)
                 print(f"Batch {batch}/4 for {state} saved to master file.")
             
-            time.sleep(1) # Prevent API rate limits
+            time.sleep(1)
 
     print(f"\nCOMPLETED. All data is now in: {csv_file}")
 
